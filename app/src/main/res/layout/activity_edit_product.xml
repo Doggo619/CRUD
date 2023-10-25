@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddProducts"
+    tools:context=".EditProductActivity"
     android:padding="20dp">
 
     <TextView
-        android:id="@+id/tv_addproducts"
+        android:id="@+id/tv_editproducts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/et_productname"
+        android:id="@+id/et_editproductname"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
@@ -29,10 +29,10 @@
         android:hint="Product Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_addproducts" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_editproducts" />
 
     <EditText
-        android:id="@+id/et_price"
+        android:id="@+id/et_editprice"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
@@ -41,10 +41,10 @@
         android:hint="Product Price"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_productname" />
+        app:layout_constraintTop_toBottomOf="@+id/et_editproductname" />
 
     <EditText
-        android:id="@+id/et_category"
+        android:id="@+id/et_editcategory"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
@@ -53,10 +53,10 @@
         android:hint="Product category"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_price" />
+        app:layout_constraintTop_toBottomOf="@+id/et_editprice" />
 
     <EditText
-        android:id="@+id/et_description"
+        android:id="@+id/et_editdescription"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
@@ -64,12 +64,12 @@
         android:layout_marginEnd="20dp"
         android:hint="Product description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_category" />
+        app:layout_constraintTop_toBottomOf="@+id/et_editcategory" />
 
     <EditText
-        android:id="@+id/imageurl"
+        android:id="@+id/editimageurl"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
@@ -78,10 +78,10 @@
         android:hint="Product image (URL)"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_description" />
+        app:layout_constraintTop_toBottomOf="@+id/et_editdescription" />
 
     <Button
-        android:id="@+id/btn_add"
+        android:id="@+id/btn_update"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginStart="250dp"
@@ -89,10 +89,10 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="187dp"
         android:backgroundTint="#255EEA"
-        android:text="+Add"
+        android:text="Update"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageurl" />
+        app:layout_constraintTop_toBottomOf="@+id/editimageurl" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

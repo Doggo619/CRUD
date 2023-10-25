@@ -2,9 +2,12 @@ package com.base.crud1;
 
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -16,9 +19,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     private List<ProductEntity> products;
     private Context context;
+    private OnItemClickListener listener;
 
     public ProductAdapter(Context context) {
         this.context = context;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    public interface OnItemClickListener {
+        void onEditClick(int position);
+        void onDeleteClick(int position);
     }
 
     @NonNull
@@ -37,16 +50,51 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             // Set other views accordingly
             holder.productCategory.setText(product.getProductCategory());
             holder.productDescription.setText(product.getProductDescription());
+            holder.editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener != null) {
+                        int position = holder.getAdapterPosition();
+                        if( position != RecyclerView.NO_POSITION) {
+                            listener.onEditClick(position);
+                        }
+                    }
+                }
+            });
 
-            // Load the image using Picasso
-            Picasso.get()
-                    .load(product.getProductImage()) // URL of the image
-                    .placeholder(R.drawable.ic_android_black_24dp)
-                    .error(R.drawable.ic_android_black_24dp)// Drawable shown if there's an error loading the image
-                    .into(holder.productImage); // ImageView to load the image into
+            holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener != null) {
+                        int position = holder.getAdapterPosition();
+                        if( position != RecyclerView.NO_POSITION) {
+                            listener.onDeleteClick(position);
+                        }
+                    }
+                }
+            });
+
+            if (!TextUtils.isEmpty(product.getProductImage())) {
+                Picasso.get()
+                        .load(product.getProductImage()) // URL of the image
+                        .placeholder(R.drawable.ic_android_black_24dp)
+                        .error(R.drawable.ic_android_black_24dp)// Drawable shown if there's an error loading the image
+                        .into(holder.productImage); // ImageView to load the image into
+            } else {
+                // Handle the case when the image path is empty or null (e.g., set a placeholder image)
+                 Picasso.get().load(R.drawable.ic_android_black_24dp).into(holder.productImage);
+            }
+
+
         }
-    }
 
+    }
+    public ProductEntity getProductAt(int position) {
+        if (products != null && position >= 0 && position < products.size()) {
+            return products.get(position);
+        }
+        return null;
+    }
     @Override
     public int getItemCount() {
         return (products != null) ? products.size() : 0;
@@ -63,6 +111,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         ImageView productImage;
         TextView productCategory;
         TextView productDescription;
+        ImageButton editButton;
+        ImageButton deleteButton;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,7 +121,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productImage = itemView.findViewById(R.id.iv_productimage);
             productCategory = itemView.findViewById(R.id.tv_productcategory);
             productDescription = itemView.findViewById(R.id.tv_productdescription);
-            // Initialize other TextViews and Views here
+            editButton = itemView.findViewById(R.id.btn_edit);
+            deleteButton = itemView.findViewById(R.id.btn_delete);
+
         }
     }
 }

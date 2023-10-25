@@ -47,6 +47,7 @@ public class AddProducts extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     Toast.makeText(getApplicationContext(),"Product is Added!", Toast.LENGTH_SHORT).show();
+                                    finish();
                                 }
                             });
                         }
