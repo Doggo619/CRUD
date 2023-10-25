@@ -30,5 +30,12 @@ public class Dashboard extends AppCompatActivity {
                 startActivity(new Intent(Dashboard.this, AddProducts.class));
             }
         });
+
+        viewProducts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Dashboard.this, ViewProducts.class));
+            }
+        });
     }
 }
