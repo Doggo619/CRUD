@@ -17,6 +17,9 @@ public class ProductsRepository {
         productsDao = database.productsDao();
         allProducts = productsDao.getAllProducts();
     }
+    public LiveData<List<ProductEntity>> getProductsForUser(String userId) {
+        return productsDao.getProductsForUser(userId);
+    }
 
     public LiveData<List<ProductEntity>> getAllProducts() {
         return allProducts;

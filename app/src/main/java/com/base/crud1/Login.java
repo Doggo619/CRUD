@@ -2,7 +2,9 @@ package com.base.crud1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -50,6 +52,10 @@ public class Login extends AppCompatActivity {
                                 });
                             }  else {
                                 String name = userEntity.email;
+                                SharedPreferences preferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putString("userId", userEntity.getUserId()); // Use the appropriate user ID field from UserEntity.
+                                editor.apply();
                                 startActivity(new Intent(Login.this, Dashboard.class).putExtra("name",name));
                             }
                         }

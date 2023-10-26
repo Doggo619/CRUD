@@ -10,6 +10,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.UUID;
+
 public class MainActivity extends AppCompatActivity {
 
     EditText email, password, role;
@@ -30,7 +32,10 @@ public class MainActivity extends AppCompatActivity {
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String userId = UUID.randomUUID().toString();
+
                 UserEntity userEntity = new UserEntity();
+                userEntity.setUserId(userId);
                 userEntity.setEmail(email.getText().toString());
                 userEntity.setPassword(password.getText().toString());
                 userEntity.setRole(role.getText().toString());

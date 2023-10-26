@@ -9,7 +9,8 @@ public class UserEntity {
 
     @PrimaryKey(autoGenerate = true)
     Integer id;
-
+    @ColumnInfo(name = "userId") // Add this field
+    String userId;
     @ColumnInfo(name = "email")
     String email;
 
@@ -18,6 +19,14 @@ public class UserEntity {
 
     @ColumnInfo(name = "role")
     String role;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public Integer getId() {
         return id;

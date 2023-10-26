@@ -18,6 +18,10 @@ public class ProductViewModel extends AndroidViewModel {
     public LiveData<List<ProductEntity>> getAllProducts() {
         return allProducts;
     }
+
+    public LiveData<List<ProductEntity>> getProductsForUser(String userId) {
+        return repository.getProductsForUser(userId);
+    }
     public void deleteProduct(ProductEntity product) {
         repository.deleteProduct(product);
     }

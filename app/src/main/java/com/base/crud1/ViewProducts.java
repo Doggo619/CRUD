@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,16 +37,27 @@ public class ViewProducts extends AppCompatActivity implements ProductAdapter.On
         // Set the click listener
         productAdapter.setOnItemClickListener(this);
 
+        SharedPreferences preferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        String userId = preferences.getString("userId", "");
+
+
         // Initialize the ViewModel
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
-
-        // Observe the list of products and update the RecyclerView when the data changes
-        productViewModel.getAllProducts().observe(this, new Observer<List<ProductEntity>>() {
+        productViewModel.getProductsForUser(userId).observe(this, new Observer<List<ProductEntity>>() {
             @Override
             public void onChanged(List<ProductEntity> products) {
+                // Update your RecyclerView or adapter with the user-specific products
                 productAdapter.setProducts(products);
             }
         });
+
+        // Observe the list of products and update the RecyclerView when the data changes
+//        productViewModel.getAllProducts().observe(this, new Observer<List<ProductEntity>>() {
+//            @Override
+//            public void onChanged(List<ProductEntity> products) {
+//                productAdapter.setProducts(products);
+//            }
+//        });
 
         recyclerView.setAdapter(productAdapter);
     }
@@ -63,6 +76,7 @@ public class ViewProducts extends AppCompatActivity implements ProductAdapter.On
             // You can start an EditProductActivity and pass the product details for editing.
             startActivity(new Intent(ViewProducts.this, EditProductActivity.class)
                     .putExtra("productId", product.getId()) // Pass the product ID
+                    .putExtra("userId", product.getUserId())
                     .putExtra("name", name)
                     .putExtra("price", price)
                     .putExtra("category", category)

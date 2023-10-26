@@ -2,6 +2,8 @@ package com.base.crud1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -29,7 +31,12 @@ public class AddProducts extends AppCompatActivity {
         addProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences preferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+                String userId = preferences.getString("userId", "");
+
+
                 ProductEntity productEntity = new ProductEntity();
+                productEntity.setUserId(userId);
                 productEntity.setProductName(name.getText().toString());
                 productEntity.setProductPrice(Integer.parseInt(price.getText().toString()));
                 productEntity.setProductCategory(category.getText().toString());

@@ -20,4 +20,6 @@ public interface ProductsDao {
     void deleteProducts(ProductEntity productEntity);
     @Query("SELECT * FROM products")
     LiveData<List<ProductEntity>> getAllProducts();
+    @Query("SELECT * FROM products WHERE userId = :userId")
+    LiveData<List<ProductEntity>> getProductsForUser(String userId);
 }

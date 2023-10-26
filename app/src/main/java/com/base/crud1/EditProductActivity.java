@@ -35,20 +35,21 @@ public class EditProductActivity extends AppCompatActivity {
 
         // Retrieve the product data from the Intent
         int productId = getIntent().getIntExtra("productId", -1);
+        String userId = getIntent().getStringExtra("userId");
         String name = getIntent().getStringExtra("name");
         Integer price = getIntent().getIntExtra("price",0);
         String category = getIntent().getStringExtra("category");
         String description = getIntent().getStringExtra("description");
         String image = getIntent().getStringExtra("image");
 
-        if (name != null) {
+
             // Prefill the EditText fields with product data
             etProductName.setText(name);
             etProductPrice.setText(String.valueOf(price));
             etProductCategory.setText(category);
             etProductDescription.setText(description);
             etProductImage.setText(image);
-        }
+
 
         // Set an onClickListener for the "Update" button
         btnUpdate.setOnClickListener(new View.OnClickListener() {
@@ -62,7 +63,8 @@ public class EditProductActivity extends AppCompatActivity {
 
                 // Create an updated product entity
                 ProductEntity updatedProduct = new ProductEntity();
-                updatedProduct.setId(productId); // Set the ID of the original product
+                updatedProduct.setId(productId);
+                updatedProduct.setUserId(userId);// Set the ID of the original product
                 updatedProduct.setProductName(updatedName);
                 updatedProduct.setProductPrice(updatedPrice);
                 updatedProduct.setProductCategory(updatedCategory);
