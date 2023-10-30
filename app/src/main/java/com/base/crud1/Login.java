@@ -57,6 +57,15 @@ public class Login extends AppCompatActivity {
                                 editor.putString("userId", userEntity.getUserId()); // Use the appropriate user ID field from UserEntity.
                                 editor.apply();
                                 startActivity(new Intent(Login.this, Dashboard.class).putExtra("name",name));
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        email.setText("");
+                                        password.setText("");
+                                        role.setText("");
+                                        term.setChecked(false);
+                                    }
+                                });
                             }
                         }
                     }).start();

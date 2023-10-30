@@ -1,32 +1,69 @@
 package com.base.crud1;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import java.io.IOException;
 
 public class AddProducts extends AppCompatActivity {
 
-    EditText name, price, category, description, image;
-    Button addProduct;
+    private static final int GALLERY_REQ_CODE = 1;
+    private static final int PERMISSION_REQUEST_CODE = 2;
+
+    EditText name, price, category, description;
+    Button addProduct, image;
+    ImageView selectedImage;
+    Uri selectedImageUri;
+    ProductEntity productEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_products);
 
+
+
         name = findViewById(R.id.et_productname);
         price = findViewById(R.id.et_price);
         category = findViewById(R.id.et_category);
         description = findViewById(R.id.et_description);
-        image = findViewById(R.id.imageurl);
+        image = findViewById(R.id.btn_image);
+        selectedImage = findViewById(R.id.iv_selectedimage);
 
         addProduct = findViewById(R.id.btn_add);
+
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (ContextCompat.checkSelfPermission(AddProducts.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    // Permission already granted, open the image picker
+                    openImagePicker();
+                } else {
+                    // Permission not granted, request it from the user
+                    ActivityCompat.requestPermissions(AddProducts.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+                }
+            }
+        });
 
         addProduct.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,13 +72,13 @@ public class AddProducts extends AppCompatActivity {
                 String userId = preferences.getString("userId", "");
 
 
-                ProductEntity productEntity = new ProductEntity();
+                productEntity = new ProductEntity();
                 productEntity.setUserId(userId);
                 productEntity.setProductName(name.getText().toString());
                 productEntity.setProductPrice(Integer.parseInt(price.getText().toString()));
                 productEntity.setProductCategory(category.getText().toString());
                 productEntity.setProductDescription(description.getText().toString());
-                productEntity.setProductImage(image.getText().toString());
+                productEntity.setProductImage(selectedImageUri.toString());
 
                 if (validateProductDetails(productEntity)) {
                     ProductDatabase productDatabase = ProductDatabase.getProductDatabase(getApplicationContext());
@@ -49,14 +86,33 @@ public class AddProducts extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            productsDao.addProducts(productEntity);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(getApplicationContext(),"Product is Added!", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                }
-                            });
+                            String productImage = productEntity.getProductImage();
+                            Log.d("Image URI", productImage);
+                            long productId = productsDao.addProducts(productEntity);
+                            if (productId > 0) {
+                                // Insert the user-product mapping into the new table
+                                Integer productIntegerId = (int) productId;
+                                UserProductMapping userProductMapping = new UserProductMapping();
+                                userProductMapping.setUserId(userId);
+                                userProductMapping.setProductId(productIntegerId);
+
+                                // Insert the mapping into the new table
+                                productsDao.addUserProductMapping(userProductMapping);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), "Product is Added!", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+                                });
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), "Failed to add the product", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
                         }
                     }).start();
                 } else {
@@ -65,7 +121,22 @@ public class AddProducts extends AppCompatActivity {
             }
         });
     }
+    private void openImagePicker() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
 
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), GALLERY_REQ_CODE);
+    }
+
+    private void loadImageFromUri(Uri selectedImageUri) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+            selectedImage.setImageBitmap(bitmap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     private boolean validateProductDetails(ProductEntity productEntity) {
         if (productEntity.getProductName().isEmpty()) {
             name.setError("Please fill out the name of the product");
@@ -94,4 +165,43 @@ public class AddProducts extends AppCompatActivity {
         return true;
 
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GALLERY_REQ_CODE && resultCode == RESULT_OK) {
+            selectedImageUri = data.getData();
+            Log.d("SelectedImageUri", selectedImageUri.toString());
+            // Check if permission is granted before loading the image
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, load the image
+                if (productEntity == null) {
+                    productEntity = new ProductEntity();
+                }
+                productEntity.setProductImage(selectedImageUri.toString());
+                loadImageFromUri(selectedImageUri);
+            } else {
+                // Permission denied, handle this case
+                Toast.makeText(this, "Permission denied to access images", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, load the image
+                loadImageFromUri(selectedImageUri);
+            } else {
+                // Permission denied, handle this case
+                Toast.makeText(this, "Permission denied to access images", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 }

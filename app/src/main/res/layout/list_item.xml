@@ -20,6 +20,8 @@
         android:layout_width="150dp"
         android:layout_height="match_parent"
         android:id="@+id/iv_productimage"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
         />
     <TextView
         android:id="@+id/tv_productname"
@@ -68,7 +70,8 @@
         android:layout_marginStart="250dp"
         android:layout_marginTop="40dp"
         android:contentDescription="edit button"
-        android:src="@drawable/ic_edit" />
+        android:src="@drawable/ic_edit"
+        android:backgroundTint="@color/white"/>
 
     <ImageButton
         android:id="@+id/btn_delete"
@@ -77,7 +80,8 @@
         android:layout_marginStart="300dp"
         android:layout_marginTop="40dp"
         android:contentDescription="delete button"
-        android:src="@drawable/ic_delete" />
+        android:src="@drawable/ic_delete"
+        android:backgroundTint="@color/white"/>
 
 
 

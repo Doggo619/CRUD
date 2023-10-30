@@ -49,7 +49,10 @@ public class ViewProducts extends AppCompatActivity implements ProductAdapter.On
                 // Update your RecyclerView or adapter with the user-specific products
                 productAdapter.setProducts(products);
             }
+
+
         });
+
 
         // Observe the list of products and update the RecyclerView when the data changes
 //        productViewModel.getAllProducts().observe(this, new Observer<List<ProductEntity>>() {
@@ -61,6 +64,8 @@ public class ViewProducts extends AppCompatActivity implements ProductAdapter.On
 
         recyclerView.setAdapter(productAdapter);
     }
+
+
 
     public void onEditClick(int position) {
         // Handle edit action for the item at the specified position

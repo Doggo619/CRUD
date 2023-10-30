@@ -9,7 +9,7 @@ public class UserEntity {
 
     @PrimaryKey(autoGenerate = true)
     Integer id;
-    @ColumnInfo(name = "userId") // Add this field
+    @ColumnInfo(name = "userId")
     String userId;
     @ColumnInfo(name = "email")
     String email;

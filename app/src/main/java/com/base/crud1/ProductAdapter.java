@@ -2,7 +2,9 @@ package com.base.crud1;
 
 
 import android.content.Context;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +14,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
@@ -45,17 +50,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         if (products != null) {
             ProductEntity product = products.get(position);
+            Log.d("ProductAdapter", "Binding product: " + product.getProductName());
             holder.productName.setText(product.getProductName());
             holder.productPrice.setText(String.valueOf(product.getProductPrice()));
             // Set other views accordingly
             holder.productCategory.setText(product.getProductCategory());
             holder.productDescription.setText(product.getProductDescription());
+            Log.d("ProductAdapter", "Product Image Uri: " + product.getProductImage());
             holder.editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(listener != null) {
+                    if (listener != null) {
                         int position = holder.getAdapterPosition();
-                        if( position != RecyclerView.NO_POSITION) {
+                        if (position != RecyclerView.NO_POSITION) {
                             listener.onEditClick(position);
                         }
                     }
@@ -65,9 +72,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             holder.deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(listener != null) {
+                    if (listener != null) {
                         int position = holder.getAdapterPosition();
-                        if( position != RecyclerView.NO_POSITION) {
+                        if (position != RecyclerView.NO_POSITION) {
                             listener.onDeleteClick(position);
                         }
                     }
@@ -75,26 +82,32 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             });
 
             if (!TextUtils.isEmpty(product.getProductImage())) {
-                Picasso.get()
-                        .load(product.getProductImage()) // URL of the image
-                        .placeholder(R.drawable.ic_android_black_24dp)
-                        .error(R.drawable.ic_android_black_24dp)// Drawable shown if there's an error loading the image
-                        .into(holder.productImage); // ImageView to load the image into
+                Uri productImageUri = Uri.parse(product.getProductImage());
+
+                Log.d("ProductAdapter", "Loading image from URI: " + productImageUri);
+                RequestOptions options = new RequestOptions()
+                        .error(R.drawable.ic_delete)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
+
+                Glide.with(context)
+                        .load(productImageUri)
+                        .apply(options)
+                        .into(holder.productImage);
             } else {
+                Log.d("ProductAdapter", "No image URI provided.");
                 // Handle the case when the image path is empty or null (e.g., set a placeholder image)
-                 Picasso.get().load(R.drawable.ic_android_black_24dp).into(holder.productImage);
+                holder.productImage.setImageResource(R.drawable.ic_default);
             }
-
-
         }
-
     }
+
     public ProductEntity getProductAt(int position) {
         if (products != null && position >= 0 && position < products.size()) {
             return products.get(position);
         }
         return null;
     }
+
     @Override
     public int getItemCount() {
         return (products != null) ? products.size() : 0;
@@ -123,7 +136,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productDescription = itemView.findViewById(R.id.tv_productdescription);
             editButton = itemView.findViewById(R.id.btn_edit);
             deleteButton = itemView.findViewById(R.id.btn_delete);
-
         }
     }
 }
+

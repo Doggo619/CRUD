@@ -32,6 +32,7 @@ public class ProductEntity {
     @ColumnInfo(name = "productImage")
     String productImage;
 
+
     public Integer getId() {
         return id;
     }
