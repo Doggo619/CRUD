@@ -2,38 +2,42 @@ package com.base.crud1;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+import com.squareup.picasso.Picasso;
 
 public class EditProductActivity extends AppCompatActivity {
     private EditText etProductName;
     private EditText etProductPrice;
     private EditText etProductCategory;
     private EditText etProductDescription;
-    private EditText etProductImage;
-    private Button btnUpdate;
+    private ImageView productImageView;
+    private Uri selectedImageUri;
     private ProductViewModel productViewModel;
+
+    private static final int GALLERY_REQ_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_product);
 
-        // Initialize your EditText and Button views
         etProductName = findViewById(R.id.et_editproductname);
         etProductPrice = findViewById(R.id.et_editprice);
         etProductCategory = findViewById(R.id.et_editcategory);
         etProductDescription = findViewById(R.id.et_editdescription);
-        etProductImage = findViewById(R.id.editimageurl);
-        btnUpdate = findViewById(R.id.btn_update);
+        productImageView = findViewById(R.id.iv_editselectedimage);
+        Button btnSelectImage = findViewById(R.id.btn_editimage);
+        Button btnUpdate = findViewById(R.id.btn_update);
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
 
-        // Retrieve the product data from the Intent
+
         int productId = getIntent().getIntExtra("productId", -1);
         String userId = getIntent().getStringExtra("userId");
         String name = getIntent().getStringExtra("name");
@@ -48,10 +52,18 @@ public class EditProductActivity extends AppCompatActivity {
             etProductPrice.setText(String.valueOf(price));
             etProductCategory.setText(category);
             etProductDescription.setText(description);
-            etProductImage.setText(image);
+            Picasso.get()
+                .load(image)
+                .error(R.drawable.ic_delete) // Error placeholder
+                .into(productImageView);
 
+        btnSelectImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openImagePicker();
+            }
+        });
 
-        // Set an onClickListener for the "Update" button
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,9 +71,9 @@ public class EditProductActivity extends AppCompatActivity {
                 int updatedPrice = Integer.parseInt(etProductPrice.getText().toString());
                 String updatedCategory = etProductCategory.getText().toString();
                 String updatedDescription = etProductDescription.getText().toString();
-                String updatedImage = etProductImage.getText().toString();
+                String updatedImage = selectedImageUri.toString();
 
-                // Create an updated product entity
+
                 ProductEntity updatedProduct = new ProductEntity();
                 updatedProduct.setId(productId);
                 updatedProduct.setUserId(userId);// Set the ID of the original product
@@ -73,10 +85,27 @@ public class EditProductActivity extends AppCompatActivity {
 
                 productViewModel.updateProduct(updatedProduct);
 
-                // Show a toast message indicating the update
                 Toast.makeText(getApplicationContext(), "Product updated", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
+    }
+    private void openImagePicker() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), GALLERY_REQ_CODE);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GALLERY_REQ_CODE && resultCode == RESULT_OK) {
+            selectedImageUri = data.getData();
+            Picasso.get()
+                    .load(selectedImageUri)
+                    .error(R.drawable.ic_delete) // Error placeholder
+                    .into(productImageView);
+        }
     }
 }

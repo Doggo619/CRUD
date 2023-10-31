@@ -2,21 +2,17 @@ package com.base.crud1;
 
 
 import android.content.Context;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -82,16 +78,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             });
 
             if (!TextUtils.isEmpty(product.getProductImage())) {
-                Uri productImageUri = Uri.parse(product.getProductImage());
 
-                Log.d("ProductAdapter", "Loading image from URI: " + productImageUri);
-                RequestOptions options = new RequestOptions()
+                Picasso.get()
+                        .load(product.getProductImage())
                         .error(R.drawable.ic_delete)
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
-
-                Glide.with(context)
-                        .load(productImageUri)
-                        .apply(options)
                         .into(holder.productImage);
             } else {
                 Log.d("ProductAdapter", "No image URI provided.");
@@ -100,6 +90,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             }
         }
     }
+
 
     public ProductEntity getProductAt(int position) {
         if (products != null && position >= 0 && position < products.size()) {

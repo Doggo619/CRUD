@@ -1,7 +1,6 @@
 package com.base.crud1;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -11,10 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +19,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.IOException;
+import com.squareup.picasso.Picasso;
+
 
 public class AddProducts extends AppCompatActivity {
 
@@ -130,11 +128,22 @@ public class AddProducts extends AppCompatActivity {
     }
 
     private void loadImageFromUri(Uri selectedImageUri) {
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
-            selectedImage.setImageBitmap(bitmap);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (selectedImageUri != null) {
+            Picasso.get()
+                    .load(selectedImageUri)
+                    .into(selectedImage); // Load the image into the ImageView
+
+            // Optionally, you can resize the image and center crop it:
+            // Picasso.with(this)
+            //     .load(selectedImageUri)
+            //     .resize(500, 500)
+            //     .centerCrop()
+            //     .into(selectedImage);
+
+            // Make sure to remove the previous code where you used MediaStore to load the image.
+        } else {
+            // Handle the case when the selectedImageUri is null or invalid
+            Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show();
         }
     }
     private boolean validateProductDetails(ProductEntity productEntity) {

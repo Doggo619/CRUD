@@ -68,31 +68,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_editcategory" />
 
-    <EditText
-        android:id="@+id/editimageurl"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
+    <Button
+        android:id="@+id/btn_editimage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="15dp"
-        android:layout_marginEnd="20dp"
-        android:hint="Product image (URL)"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="#2C56A8"
+        android:contentDescription="upload image"
+        android:text="Upload Image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_editdescription" />
 
+    <ImageView
+        android:id="@+id/iv_editselectedimage"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_editdescription" />
     <Button
         android:id="@+id/btn_update"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginStart="250dp"
-        android:layout_marginTop="30dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="187dp"
+        android:layout_marginBottom="84dp"
         android:backgroundTint="#255EEA"
         android:text="Update"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editimageurl" />
+        app:layout_constraintHorizontal_bias="0.268"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
